@@ -1,0 +1,1 @@
+SELECT employees.*, salaries.salary, salaries.commentary, titles.title, titles.lotterychance FROM employees JOIN salaries ON employees.empno = salaries.empno JOIN titles ON employees.empno = titles.empno
