@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
 import numpy as np
 import string
+from datetime import datetime, timedelta
 
 
 def random_word(word_length=11):
@@ -18,8 +18,8 @@ def random_float(min_f=0.0, max_f=100000):
     return round(np.random.uniform(min_f, max_f), 2)
 
 
-def random_date(year_disp=99.0):
-    return (datetime.today() - timedelta(days=np.random.randint(0, 365 * year_disp))).date()
+def random_date(year_display=99.0):
+    return (datetime.today() - timedelta(days=np.random.randint(0, 365 * year_display))).date()
 
 
 def random_employee():
@@ -53,9 +53,9 @@ def random_titles(empn):
     }
 
 
-# созадем массив всех ASCII символов нижнего регистра для последующего случайного выбора из него
+# Creating list of ASCII symbols to chose symbols from it
 alphabet = np.array(list(string.ascii_lowercase))
-# созадем массив должностей чтобы не получилось много президентов
+# Creating list of titles and genders
 titles_rank = ['president', 'director', 'head of management', 'ceo']
 titles_ordinary = ['worker', 'manager', 'IT']
 gender = ['M', 'F']

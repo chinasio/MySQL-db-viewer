@@ -1,15 +1,13 @@
-import mysql.connector
-import db_setup
-import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-
 import pandas as pd
-
-from interface import PandasModel
+from source.interface.interface import PandasModel
 
 
 class Widget(QtWidgets.QWidget):
+    """
+
+    """
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent=None)
         vLayout = QtWidgets.QVBoxLayout(self)
@@ -30,31 +28,69 @@ class Widget(QtWidgets.QWidget):
         vLayout.addLayout(hLayout)
         self.pandasTv = QtWidgets.QTableView(self)
         vLayout.addWidget(self.pandasTv)
-        self.loadBtn.clicked.connect(self.loadFile)
+        self.loadBtn.clicked.connect(self.load_file)
         self.exportBtn.clicked.connect(self.export)
         self.exportFilteredBtn.clicked.connect(lambda: self.export(False))
         self.filterBtn.clicked.connect(self.specify_filter)
         self.pandasTv.setSortingEnabled(True)
 
-    def loadFile(self):
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)");
-        self.pathLE.setText(fileName)
-        df = pd.read_csv(fileName)
+    def load_file(self):
+        """
+
+        Returns
+        -------
+
+        """
+        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)");
+        self.pathLE.setText(file_name)
+        df = pd.read_csv(file_name)
         model = PandasModel(df)
         self.pandasTv.setModel(model)
 
     def reset_filter(self):
+        """
+
+        Returns
+        -------
+
+        """
         return self.pandasTv.model().reset()
 
     def specify_filter(self):
+        """
+
+        Returns
+        -------
+
+        """
         options = self.filterLine.text()
         self.apply_filter(options)
 
-    def setDf(self, df):
+    def set_df(self, df):
+        """
+
+        Parameters
+        ----------
+        df :
+
+        Returns
+        -------
+
+        """
         model = PandasModel(df)
         self.pandasTv.setModel(model)
 
     def apply_filter(self, value=None):
+        """
+
+        Parameters
+        ----------
+        value :
+
+        Returns
+        -------
+
+        """
         if not value:
             print("NOT A value")
             return self.pandasTv.model().reset()
@@ -66,7 +102,17 @@ class Widget(QtWidgets.QWidget):
         self.pandasTv.model().layoutChanged.emit()
 
     def export(self, original_df=True):
-        filename = self.saveFileDialog()
+        """
+
+        Parameters
+        ----------
+        original_df :
+
+        Returns
+        -------
+
+        """
+        filename = self.save_file_dialog()
         if not ('.xlsx' or '.xls') in filename:
             filename = filename + '.xlsx'
         writer = pd.ExcelWriter(filename,
@@ -75,22 +121,14 @@ class Widget(QtWidgets.QWidget):
         df.to_excel(writer)
         writer.save()
 
+    def save_file_dialog(self):
+        """
 
-    def saveFileDialog(self):
+        Returns
+        -------
+
+        """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, "Выгрузка таблицы", "", "Excel Files (*.xlsx)", options=options)
-        return fileName
-
-
-if __name__ == "__main__":
-    cnx = mysql.connector.connect(**db_setup.grab_config())
-    db_setup.db_start(cnx, db_setup.TABLES, db_setup.DB_NAME)
-    db_setup.fill_in_db(cnx)
-    app = QtWidgets.QApplication(sys.argv)
-    w = Widget()
-    w.setDf(pd.read_sql(db_setup.grab_sql(), cnx))
-    w.show()
-    cnx.close()
-    sys.exit(app.exec_())
-
+        file_name, _ = QFileDialog.getSaveFileName(self, "Выгрузка таблицы", "", "Excel Files (*.xlsx)", options=options)
+        return file_name

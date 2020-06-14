@@ -1,6 +1,6 @@
-import mysql.connector
-import rand_fun
 import json
+import mysql.connector
+from source.utilities import rand_fun
 from mysql.connector import errorcode
 
 DB_NAME = 'hr'
@@ -39,54 +39,56 @@ TABLES = {'employees': (
 
 
 def grab_config():
-    with open('config.json') as f:
+    with open('../../config.json') as f:
         conf = json.load(f)
     return conf
 
 
 def grab_sql():
-    with open('sql.txt') as f:
+    with open('../../sql.txt') as f:
         sql = f.readline()
         print(sql)
     return sql
 
 
-def db_start(cnx, TABLES, DB_NAME):
+def db_start(cnx, tables, db_name):
     """
 
     Parameters
     ----------
-    cnx :
-    TABLES :
-    DB_NAME :
-
+    cnx : mysql.connector.cursor
+        Cursor to interface with MySQL database
+    tables : dict
+        Ditcionary that represents DB structure intnded to use with app
+    db_name : str
+        Name of database to be created or used in MySQL database
     Returns
     -------
-
+    None
     """
     cursor = cnx.cursor()
 
     def create_database(cursor):
         try:
             cursor.execute(
-                "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8mb4'".format(DB_NAME))
+                "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8mb4'".format(db_name))
         except mysql.connector.Error as err:
             print("Failed creating database: {}".format(err))
             exit(1)
 
     try:
-        cursor.execute("USE {}".format(DB_NAME))
+        cursor.execute("USE {}".format(db_name))
     except mysql.connector.Error as err:
-        print("Database {} does not exists.".format(DB_NAME))
+        print("Database {} does not exists.".format(db_name))
         if err.errno == errorcode.ER_BAD_DB_ERROR:
             create_database(cursor)
-            print("Database {} created successfully.".format(DB_NAME))
-            cnx.database = DB_NAME
+            print("Database {} created successfully.".format(db_name))
+            cnx.database = db_name
         else:
             print(err)
             exit(1)
-    for table_name in TABLES:
-        table_description = TABLES[table_name]
+    for table_name in tables:
+        table_description = tables[table_name]
         try:
             print("Creating table {}: ".format(table_name), end='')
             cursor.execute(table_description)
@@ -127,12 +129,3 @@ def fill_in_db(cnx, n=100):
         cursor.execute(add_salary, rand_fun.random_salary(empno))
         cursor.execute(add_title, rand_fun.random_titles(empno))
         cnx.commit()
-
-
-# config = {
-#   'user': 'root',
-#   'password': 'order66',
-#   'host': '127.0.0.1',
-#   'raise_on_warnings': True
-# }
-
