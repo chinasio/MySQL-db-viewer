@@ -1,4 +1,5 @@
 import json
+import os
 import mysql.connector
 from source.utilities import rand_fun
 from mysql.connector import errorcode
@@ -39,13 +40,13 @@ TABLES = {'employees': (
 
 
 def grab_config():
-    with open('../../config.json') as f:
+    with open(os.path.join(os.getcwd(), r'utilities\config.json')) as f:
         conf = json.load(f)
     return conf
 
 
 def grab_sql():
-    with open('../../sql.txt') as f:
+    with open(os.path.join(os.getcwd(), r'utilities\sql.txt')) as f:
         sql = f.readline()
         print(sql)
     return sql
