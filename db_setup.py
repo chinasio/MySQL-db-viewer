@@ -3,11 +3,46 @@ import rand_fun
 import json
 from mysql.connector import errorcode
 
+DB_NAME = 'hr'
+
+TABLES = {'employees': (
+    "CREATE TABLE `employees` ("
+    "  `empno` int(11) NOT NULL AUTO_INCREMENT,"
+    "  `birthdate` date NOT NULL,"
+    "  `firstname` varchar(14) NOT NULL,"
+    "  `lastname` varchar(20) NOT NULL,"
+    "  `gender` enum('M','F') NOT NULL,"
+    "  `hiredate` date NOT NULL,"
+    "  PRIMARY KEY (`empno`)"
+    ") ENGINE=InnoDB"), 'salaries': (
+    "CREATE TABLE `salaries` ("
+    "  `empno` int(11) NOT NULL,"
+    "  `salary` float(11) NOT NULL,"
+    "  `fromdate` date NOT NULL,"
+    "  `todate` date NOT NULL,"
+    "  `commentary` varchar(50) NOT NULL,"
+    "  PRIMARY KEY (`empno`,`fromdate`), KEY `empno` (`empno`),"
+    "  CONSTRAINT `salaries_ibfk_1` FOREIGN KEY (`empno`) "
+    "     REFERENCES `employees` (`empno`) ON DELETE CASCADE"
+    ") ENGINE=InnoDB"), 'titles': (
+    "CREATE TABLE `titles` ("
+    "  `empno` int(11) NOT NULL,"
+    "  `title` varchar(50) NOT NULL,"
+    "  `fromdate` date NOT NULL,"
+    "  `todate` date DEFAULT NULL,"
+    "  `lotterychance` float(11) NOT NULL,"
+    "  `description` varchar(50) NOT NULL,"
+    "  PRIMARY KEY (`empno`,`title`,`fromdate`), KEY `empno` (`empno`),"
+    "  CONSTRAINT `titles_ibfk_1` FOREIGN KEY (`empno`)"
+    "     REFERENCES `employees` (`empno`) ON DELETE CASCADE"
+    ") ENGINE=InnoDB")}
+
 
 def grab_config():
     with open('config.json') as f:
         conf = json.load(f)
     return conf
+
 
 def grab_sql():
     with open('sql.txt') as f:
@@ -17,6 +52,18 @@ def grab_sql():
 
 
 def db_start(cnx, TABLES, DB_NAME):
+    """
+
+    Parameters
+    ----------
+    cnx :
+    TABLES :
+    DB_NAME :
+
+    Returns
+    -------
+
+    """
     cursor = cnx.cursor()
 
     def create_database(cursor):
@@ -53,6 +100,17 @@ def db_start(cnx, TABLES, DB_NAME):
 
 
 def fill_in_db(cnx, n=100):
+    """
+
+    Parameters
+    ----------
+    cnx :
+    n :
+
+    Returns
+    -------
+
+    """
     cursor = cnx.cursor()
     add_employee = ("INSERT INTO employees "
                     "(firstname, lastname, hiredate, gender, birthdate) "
@@ -78,36 +136,3 @@ def fill_in_db(cnx, n=100):
 #   'raise_on_warnings': True
 # }
 
-DB_NAME = 'hr'
-
-TABLES = {'employees': (
-    "CREATE TABLE `employees` ("
-    "  `empno` int(11) NOT NULL AUTO_INCREMENT,"
-    "  `birthdate` date NOT NULL,"
-    "  `firstname` varchar(14) NOT NULL,"
-    "  `lastname` varchar(20) NOT NULL,"
-    "  `gender` enum('M','F') NOT NULL,"
-    "  `hiredate` date NOT NULL,"
-    "  PRIMARY KEY (`empno`)"
-    ") ENGINE=InnoDB"), 'salaries': (
-    "CREATE TABLE `salaries` ("
-    "  `empno` int(11) NOT NULL,"
-    "  `salary` float(11) NOT NULL,"
-    "  `fromdate` date NOT NULL,"
-    "  `todate` date NOT NULL,"
-    "  `commentary` varchar(50) NOT NULL,"
-    "  PRIMARY KEY (`empno`,`fromdate`), KEY `empno` (`empno`),"
-    "  CONSTRAINT `salaries_ibfk_1` FOREIGN KEY (`empno`) "
-    "     REFERENCES `employees` (`empno`) ON DELETE CASCADE"
-    ") ENGINE=InnoDB"), 'titles': (
-    "CREATE TABLE `titles` ("
-    "  `empno` int(11) NOT NULL,"
-    "  `title` varchar(50) NOT NULL,"
-    "  `fromdate` date NOT NULL,"
-    "  `todate` date DEFAULT NULL,"
-    "  `lotterychance` float(11) NOT NULL,"
-    "  `description` varchar(50) NOT NULL,"
-    "  PRIMARY KEY (`empno`,`title`,`fromdate`), KEY `empno` (`empno`),"
-    "  CONSTRAINT `titles_ibfk_1` FOREIGN KEY (`empno`)"
-    "     REFERENCES `employees` (`empno`) ON DELETE CASCADE"
-    ") ENGINE=InnoDB")}

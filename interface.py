@@ -4,12 +4,27 @@ import pandas as pd
 
 
 class PandasModel(QtCore.QAbstractTableModel):
+    """
+
+    """
     def __init__(self, df=pd.DataFrame(), parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent=parent)
         self._df = df
         self._original_df = df.copy(deep=True)
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
+        """
+
+        Parameters
+        ----------
+        section :
+        orientation :
+        role :
+
+        Returns
+        -------
+
+        """
         if role != QtCore.Qt.DisplayRole:
             return QtCore.QVariant()
 
@@ -26,6 +41,17 @@ class PandasModel(QtCore.QAbstractTableModel):
                 return QtCore.QVariant()
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
+        """
+
+        Parameters
+        ----------
+        index :
+        role :
+
+        Returns
+        -------
+
+        """
         if role != QtCore.Qt.DisplayRole:
             return QtCore.QVariant()
 
@@ -37,6 +63,18 @@ class PandasModel(QtCore.QAbstractTableModel):
         return QtCore.QVariant(str(self._df.ix[row, column]))
 
     def setData(self, index, value, role):
+        """
+
+        Parameters
+        ----------
+        index :
+        value :
+        role :
+
+        Returns
+        -------
+
+        """
         row = self._df.index[index.row()]
         col = self._df.columns[index.column()]
         if hasattr(value, 'toPyObject'):
@@ -55,6 +93,17 @@ class PandasModel(QtCore.QAbstractTableModel):
         return len(self._df.columns)
 
     def sort(self, column, order):
+        """
+
+        Parameters
+        ----------
+        column :
+        order :
+
+        Returns
+        -------
+
+        """
         colname = self._df.columns.tolist()[column]
         self.layoutAboutToBeChanged.emit()
         self._df.sort_values(colname, ascending= order == QtCore.Qt.AscendingOrder, inplace=True)
@@ -62,17 +111,20 @@ class PandasModel(QtCore.QAbstractTableModel):
         self.layoutChanged.emit()
 
     def reset(self):
+        # TODO
         self.layoutAboutToBeChanged.emit()
         self._df = self._original_df.copy(deep=True)
         self.layoutChanged.emit()
 
     def export(self, original=True):
+        # TODO
         if original:
             self._original_df.to_excel('output.xlsx')
         else:
             self._df.to_excel('output_filtered.xlsx')
 
     def btn_clk(self):
+        # TODO
         path = self.lineEdit.text()
         df = pd.read_csv(path)
         model = PandasModel(df)
