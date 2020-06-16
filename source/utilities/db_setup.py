@@ -40,12 +40,14 @@ TABLES = {'employees': (
 
 
 def grab_config():
+    # Getting configuration from json file.
     with open(os.path.join(os.getcwd(), r'utilities\config.json')) as f:
         conf = json.load(f)
     return conf
 
 
 def grab_sql():
+    # Getting SQL query from txt file.
     with open(os.path.join(os.getcwd(), r'utilities\sql.txt')) as f:
         sql = f.readline()
         print(sql)
@@ -54,6 +56,7 @@ def grab_sql():
 
 def db_start(cnx, tables, db_name):
     """
+    Creating database if it not already exists.
 
     Parameters
     ----------
@@ -104,15 +107,17 @@ def db_start(cnx, tables, db_name):
 
 def fill_in_db(cnx, n=100):
     """
+    Filling database with pre-determined number of objects.
 
     Parameters
     ----------
-    cnx :
-    n :
-
+    cnx : mysql.connector.cursor
+        Cursor to interface with MySQL database.
+    n : int
+        Number of objects to be added to database.
     Returns
     -------
-
+    None
     """
     cursor = cnx.cursor()
     add_employee = ("INSERT INTO employees "

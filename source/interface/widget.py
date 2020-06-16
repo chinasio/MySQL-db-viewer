@@ -6,7 +6,12 @@ from source.interface.interface import PandasModel
 
 class Widget(QtWidgets.QWidget):
     """
+    Template class of QtWidgets.
 
+    Parameters
+    ----------
+    parent : Qt.Widget object
+        QtWidget to inherit it's properties
     """
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent=None)
@@ -36,10 +41,11 @@ class Widget(QtWidgets.QWidget):
 
     def load_file(self):
         """
+        Loading csv file with table's data and creating PandasModel instance of table.
 
         Returns
         -------
-
+        None
         """
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)");
         self.pathLE.setText(file_name)
@@ -49,30 +55,33 @@ class Widget(QtWidgets.QWidget):
 
     def reset_filter(self):
         """
+        Method used to reset filters.
 
         Returns
         -------
-
+        None
         """
         return self.pandasTv.model().reset()
 
     def specify_filter(self):
         """
+        Determining type of filter.
 
         Returns
         -------
-
+        None
         """
         options = self.filterLine.text()
         self.apply_filter(options)
 
     def set_df(self, df):
         """
+        Method for creating PandasModel instance of table.
 
         Parameters
         ----------
-        df :
-
+        df : pandas.DataFrame
+            DataFrame to be used for table's creation.
         Returns
         -------
 
@@ -82,14 +91,15 @@ class Widget(QtWidgets.QWidget):
 
     def apply_filter(self, value=None):
         """
+        Filter application method via PandasModel built-in methods.
 
         Parameters
         ----------
-        value :
-
+        value : str
+            String of that contains pandas query.
         Returns
         -------
-
+        None
         """
         if not value:
             print("NOT A value")
@@ -103,14 +113,16 @@ class Widget(QtWidgets.QWidget):
 
     def export(self, original_df=True):
         """
+        Exporting DataFrame to xls file.
 
         Parameters
         ----------
-        original_df :
+        original_df : pandas.DataFrame
+            DataFrame to be exported.
 
         Returns
         -------
-
+        None
         """
         filename = self.save_file_dialog()
         if not ('.xlsx' or '.xls') in filename:
@@ -123,10 +135,12 @@ class Widget(QtWidgets.QWidget):
 
     def save_file_dialog(self):
         """
+        Function that determines behaviour of save button.
 
         Returns
         -------
-
+        file_name : str
+            Name of the saved file.
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
