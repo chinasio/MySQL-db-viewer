@@ -18,7 +18,7 @@ Use & as AND, | as OR, == as EQUAL, non-numeric variabels (not table columns) sh
 ## Example 
 
 As pandas query syntax was used, query for selecting female employees with their number above 100 you should use
-
+```
   epmno > 100 & gender == "F"
-
+```
 you can see that **F** is non-numeric, it should be encased in quotation.
